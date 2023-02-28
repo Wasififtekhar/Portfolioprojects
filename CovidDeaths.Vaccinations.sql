@@ -13,11 +13,15 @@ FROM portfolioproject.dbo.CovidDeaths
 where location like '%states%'
 order by 1,2
 
+-- Total Cases vs Total Deaths
+-- Shows likelihood of dying if you contract covid in the country
 
 select location, date, population, total_cases, (total_cases/population)*100 as PercentPopulationInfected
 FROM portfolioproject.dbo.CovidDeaths
 where location like '%states%'
 order by 1,2
+
+-- Countries with Highest Infection Rate compared to Population
 
 select location, population, MAX(total_cases) as highestInfectionCount, MAX((total_cases/population))*100 as PercentPopulationInfected
 FROM portfolioproject.dbo.CovidDeaths
@@ -27,6 +31,7 @@ order by PercentPopulationInfected desc
 
 
 
+-- Countries with Highest Death Count per Population
 
 select location, MAX(cast(total_deaths as int)) as TotalDeathCount
 FROM portfolioproject.dbo.CovidDeaths
@@ -35,6 +40,7 @@ where continent is null
 Group by location
 order by TotalDeathCount desc
 
+-- Showing contintents with the highest death count per population
 
 select continent, MAX(cast(total_deaths as int)) as TotalDeathCount
 FROM portfolioproject.dbo.CovidDeaths
@@ -43,6 +49,7 @@ where continent is not null
 Group by continent
 order by TotalDeathCount desc
 
+-- GLOBAL NUMBERS
 
 select SUM(new_cases) as total_cases, SUM(cast(New_deaths as int)) as total_deaths, SUM(cast(new_deaths as int))/SUM(New_cases)*100 as Deathpercentage
 FROM portfolioproject.dbo.CovidDeaths
@@ -50,6 +57,8 @@ FROM portfolioproject.dbo.CovidDeaths
 where continent is not null
 --Group by date
 order by 1,2
+
+-- Using CTE to perform Calculation on Partition By in previous query
 
 with PopvsVac (Continent, location, date, population, New_vaccinations, RollingPeopleVaccinated)
 as
@@ -93,7 +102,7 @@ from #PercentPopulationVaccinated
 
 
 
---visual 
+--visual store data for later visualizations
 Create View PercentPopulationVaccinated as 
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, SUM(convert(int,vac.new_vaccinations)) OVER (partition by dea.location order by dea.location, dea.date) as RollingPeopleVaccinated
 --(RollingPeopleVaccinated/population)
