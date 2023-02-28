@@ -7,15 +7,16 @@ select location, date, total_cases, new_cases, total_deaths, population
 FROM portfolioproject.dbo.CovidDeaths
 order by 1,2
 
+-- Total Cases vs Total Deaths
+-- Shows likelihood of dying if you contract covid in the country
 
 select location, date, total_cases, total_deaths, (total_deaths/total_cases)*100 as DeathPercentage
 FROM portfolioproject.dbo.CovidDeaths
 where location like '%states%'
 order by 1,2
 
--- Total Cases vs Total Deaths
--- Shows likelihood of dying if you contract covid in the country
 
+--shows amount infected out of the population 
 select location, date, population, total_cases, (total_cases/population)*100 as PercentPopulationInfected
 FROM portfolioproject.dbo.CovidDeaths
 where location like '%states%'
